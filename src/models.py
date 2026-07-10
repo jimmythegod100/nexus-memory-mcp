@@ -76,3 +76,37 @@ class HealthCheckResponse(BaseModel):
     uptime_seconds: int
     database_connected: bool
     redis_connected: bool
+
+
+class UpsertPlatformUploadRequest(BaseModel):
+    batch_id: str
+    file_path: str
+    platform: str
+    status: str
+    post_url: Optional[str] = None
+    error_message: Optional[str] = None
+    execution_node: Optional[str] = None
+
+
+class PlatformUploadResponse(BaseModel):
+    id: UUID
+    batch_id: UUID
+    file_path: str
+    platform: str
+    status: str
+    post_url: Optional[str] = None
+    error_message: Optional[str] = None
+    retry_count: int = 0
+    execution_node: Optional[str] = None
+    created_at: datetime
+    updated_at: datetime
+    completed_at: Optional[datetime] = None
+
+
+class QueryPlatformUploadsRequest(BaseModel):
+    batch_id: Optional[str] = None
+    file_path: Optional[str] = None
+    platform: Optional[str] = None
+    status: Optional[str] = None
+    execution_node: Optional[str] = None
+    limit: int = Field(default=50, ge=1, le=200)

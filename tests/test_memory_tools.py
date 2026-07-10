@@ -36,7 +36,14 @@ def _job_row():
 
 def test_memory_mcp_tools_registered():
     names = {tool.name for tool in MCP_TOOLS}
-    assert names == {"store_job", "query_jobs", "cache_get", "cache_set"}
+    assert names == {
+        "store_job",
+        "query_jobs",
+        "cache_get",
+        "cache_set",
+        "upsert_platform_upload",
+        "query_platform_uploads",
+    }
 
 
 @pytest.mark.asyncio

@@ -11,7 +11,9 @@ from src.models import (
     CacheSetRequest,
     HealthCheckResponse,
     QueryJobsRequest,
+    QueryPlatformUploadsRequest,
     StoreJobRequest,
+    UpsertPlatformUploadRequest,
 )
 from src.redis_client import RedisCache
 from src.tools import MCP_TOOLS
@@ -87,6 +89,26 @@ async def cache_set(req: CacheSetRequest):
         raise HTTPException(status_code=500, detail=str(e)) from e
 
 
+@app.post("/tools/upsert_platform_upload")
+async def upsert_platform_upload(req: UpsertPlatformUploadRequest):
+    try:
+        row = await db.upsert_platform_upload(req)
+        return row
+    except Exception as e:
+        logger.error("upsert_platform_upload failed: %s", e)
+        raise HTTPException(status_code=500, detail=str(e)) from e
+
+
+@app.post("/tools/query_platform_uploads")
+async def query_platform_uploads(req: QueryPlatformUploadsRequest):
+    try:
+        uploads = await db.query_platform_uploads(req)
+        return {"uploads": uploads}
+    except Exception as e:
+        logger.error("query_platform_uploads failed: %s", e)
+        raise HTTPException(status_code=500, detail=str(e)) from e
+
+
 @app.get("/health")
 async def health_check():
     uptime = int(time.time() - start_time)
@@ -120,6 +142,8 @@ async def root():
             "query_jobs": "/tools/query_jobs",
             "cache_get": "/tools/cache_get",
             "cache_set": "/tools/cache_set",
+            "upsert_platform_upload": "/tools/upsert_platform_upload",
+            "query_platform_uploads": "/tools/query_platform_uploads",
         },
     }
 
